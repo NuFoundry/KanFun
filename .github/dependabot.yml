@@ -1,0 +1,12 @@
+# Keeps the SHA-pinned GitHub Actions current: a weekly PR per update, never for a release younger
+# than a week (the same idea as pnpm's minimumReleaseAge for npm packages).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci

@@ -1,0 +1,50 @@
+---
+import { LANG_NAMES, paths, type Lang } from "../i18n";
+import { BRAND, LOGIN_URL } from "../lib/site";
+import Logo from "./Logo.astro";
+
+interface Props {
+  lang: Lang;
+  /** The current page in every language (Base.astro); the switcher links to the others. */
+  alternates: { lang: Lang; href: string }[];
+}
+const { lang, alternates } = Astro.props;
+
+const COPY: Record<Lang, { imprint: string; privacy: string; login: string }> = {
+  en: { imprint: "Imprint", privacy: "Privacy", login: "Log in" },
+  de: { imprint: "Impressum", privacy: "Datenschutz", login: "Anmelden" },
+};
+const t = COPY[lang];
+const others = alternates.filter((a) => a.lang !== lang);
+---
+
+<footer class="border-t border-line">
+  <div class="container-site flex flex-col gap-6 py-10 text-sm text-subtle md:flex-row md:items-center">
+    <Logo class="h-10 -ml-[0.4rem]" />
+    <p class="md:ml-2">
+      &copy; {new Date().getFullYear()} {BRAND.name}
+    </p>
+    <nav class="flex flex-wrap items-center gap-x-6 gap-y-2 md:ml-auto" aria-label={t.imprint}>
+      <a href={paths.imprint(lang)} class="hover:text-text" data-testid="web-imprint">
+        {t.imprint}
+      </a>
+      <a href={paths.privacy(lang)} class="hover:text-text" data-testid="web-privacy">
+        {t.privacy}
+      </a>
+      <a href={LOGIN_URL} class="hover:text-text">
+        {t.login}
+      </a>
+      {others.map((other) => (
+        <a
+          href={other.href}
+          hreflang={other.lang}
+          lang={other.lang}
+          class="rounded-md border border-line px-2.5 py-1 hover:text-text"
+          data-testid={`web-lang-${other.lang}`}
+        >
+          {LANG_NAMES[other.lang]}
+        </a>
+      ))}
+    </nav>
+  </div>
+</footer>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="KanFun">
+  <title>KanFun</title>
+  <g transform="translate(0 0) scale(10)">
+    <rect class="bg" width="24" height="24" rx="6" fill="#fd4d02"/>
+  <path class="fg" d="M12 4.5C12.7 9.1 14.9 11.3 19.5 12C14.9 12.7 12.7 14.9 12 19.5C11.3 14.9 9.1 12.7 4.5 12C9.1 11.3 11.3 9.1 12 4.5Z" fill="#ffffff"/>
+  </g>
+</svg>

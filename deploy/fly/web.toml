@@ -1,0 +1,37 @@
+# Static client + Caddy reverse proxy on Fly.io. Fly terminates TLS at the edge, so Caddy serves
+# plain HTTP on 8080 and forwards /api, /_ and the service prefixes over the private network.
+app = "kan-fun-web"
+primary_region = "fra"
+
+[build]
+  dockerfile = "../../deploy/Dockerfile.web"
+  # VITE_* build args are passed by deploy/fly/deploy.sh from deploy/.env.prod.
+
+[env]
+  DOMAIN = ":8080"
+  # Fly's edge connects from the private network and sets Fly-Client-IP to the visitor's address;
+  # Caddy trusts only that, and hands it to PocketBase's rate limits as X-Real-IP.
+  TRUSTED_PROXIES = "private_ranges"
+  CLIENT_IP_HEADERS = "Fly-Client-IP"
+  # *_UPSTREAM (<prefix>-<svc>.internal:<port>) are set by deploy.sh per environment.
+  POSTHOG_HOST = "eu.i.posthog.com"
+  POSTHOG_ASSETS_HOST = "eu-assets.i.posthog.com"
+  PLAUSIBLE_HOST = "plausible.io"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

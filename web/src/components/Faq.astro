@@ -1,0 +1,74 @@
+---
+/** Questions people ask before they sign up. Native <details>: no JavaScript. */
+import type { Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const COPY: Record<Lang, { title: string; items: [string, string][] }> = {
+  en: {
+    title: "Questions and answers",
+    items: [
+      [
+        "What does it cost?",
+        "Starting is free. When you need more, you upgrade in the app and can cancel any time.",
+      ],
+      [
+        "Where is my data stored?",
+        "On servers in the European Union. We never sell it, and you can export or delete it whenever you like.",
+      ],
+      [
+        "Do I need to install anything?",
+        "No. It runs in your browser on any device; on a phone you can add it to the home screen.",
+      ],
+      [
+        "How do I get help?",
+        "Write to us at any time; a person answers, usually within one working day.",
+      ],
+    ],
+  },
+  de: {
+    title: "Fragen und Antworten",
+    items: [
+      [
+        "Was kostet es?",
+        "Der Start ist kostenlos. Wenn Sie mehr brauchen, upgraden Sie in der App und kündigen jederzeit.",
+      ],
+      [
+        "Wo werden meine Daten gespeichert?",
+        "Auf Servern in der Europäischen Union. Wir verkaufen sie nie, und Sie können sie jederzeit exportieren oder löschen.",
+      ],
+      [
+        "Muss ich etwas installieren?",
+        "Nein. Es läuft im Browser auf jedem Gerät; am Handy legen Sie es auf den Startbildschirm.",
+      ],
+      [
+        "Wie bekomme ich Hilfe?",
+        "Schreiben Sie uns jederzeit; ein Mensch antwortet, meist innerhalb eines Werktags.",
+      ],
+    ],
+  },
+};
+const t = COPY[lang];
+---
+
+<section id="faq" class="border-t border-line py-24">
+  <div class="container-site grid gap-12 lg:grid-cols-[1fr_2fr]">
+    <h2 class="text-4xl font-semibold tracking-[-0.03em] text-balance">{t.title}</h2>
+    <div class="divide-y divide-line border-y border-line">
+      {t.items.map(([question, answer]) => (
+        <details class="group py-5" data-testid="web-faq">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-medium [&::-webkit-details-marker]:hidden">
+            {question}
+            <span class="grid size-8 shrink-0 place-items-center rounded-full border border-line text-subtle transition group-open:rotate-45">
+              +
+            </span>
+          </summary>
+          <p class="mt-3 max-w-2xl leading-relaxed text-subtle">{answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

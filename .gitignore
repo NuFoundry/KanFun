@@ -1,0 +1,61 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+.astro
+dist-ssr
+build
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-*.log
+
+# Environment (keep the examples)
+.env
+.env.*
+!.env.example
+!.env.prod.example
+*.local
+
+# Tests
+coverage
+playwright-report
+test-results
+blob-report
+playwright/.cache
+
+# PocketBase runtime files (binary + data live outside git)
+server/pocketbase
+server/pocketbase.exe
+server/pb_data
+server/pb_public
+server/*.zip
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.swp
+
+# Temp files written by scripts/
+server/.tmp
+
+# Dev outbox of the mailer service
+services/mailer/outbox
+
+# Logo drafts and their preview sheet (pnpm brand --preview); the chosen one is logo/mark.svg.
+corporate-identity/logo/drafts/
+
+# PDF previews (pnpm --filter pdf preview)
+services/pdf/previews
+
+# What the user drops for agents (screenshots, documents, briefs); only the README is tracked
+references/*
+!references/README.md

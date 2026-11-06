@@ -1,0 +1,24 @@
+# MCP server on Fly.io (private; Caddy proxies /mcp/* and the OAuth discovery documents to it).
+app = "kan-fun-mcp"
+primary_region = "fra"
+
+[build]
+  dockerfile = "../../services/mcp/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  MCP_HOST = "::"
+  MCP_PORT = "8791"
+  # POCKETBASE_URL (http://<prefix>-pb.internal:8090) is set by deploy.sh per environment.
+
+[checks.health]
+  type = "http"
+  port = 8791
+  path = "/mcp/health"
+  interval = "15s"
+  timeout = "5s"
+  grace_period = "10s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

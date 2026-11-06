@@ -1,0 +1,30 @@
+# PocketBase on Fly.io: one machine, one persistent volume. Deployed from the repo root by
+# deploy/fly/deploy.sh (`pnpm deploy:prod`). Secrets come from deploy/.env.prod.
+app = "kan-fun-pb"
+primary_region = "fra"
+
+[build]
+  dockerfile = "../../server/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  # Fly's private network is IPv6: listen on all addresses so *.internal reaches us.
+  PB_LISTEN = "[::]:8090"
+  # MAIL_URL (http://<prefix>-mailer.internal:8788) is set by deploy.sh per environment.
+
+[[mounts]]
+  source = "pb_data"
+  destination = "/pb/pb_data"
+  initial_size = "1gb"
+
+[checks.health]
+  type = "http"
+  port = 8090
+  path = "/api/health"
+  interval = "15s"
+  timeout = "5s"
+  grace_period = "15s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"

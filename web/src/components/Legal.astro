@@ -1,0 +1,115 @@
+---
+/**
+ * Imprint and privacy policy, filled from OPERATOR in lib/site.ts. A starting point, not legal
+ * advice: what you must disclose depends on your country and on what your app does with data.
+ */
+import { type Lang } from "../i18n";
+import Base from "../layouts/Base.astro";
+import { BRAND, OPERATOR } from "../lib/site";
+
+interface Props {
+  lang: Lang;
+  page: "imprint" | "privacy";
+}
+const { lang, page } = Astro.props;
+const o = OPERATOR;
+
+type Section = { title: string; text: string[] };
+const COPY: Record<Lang, { imprint: string; privacy: string; sections: Section[] }> = {
+  en: {
+    imprint: "Imprint",
+    privacy: "Privacy policy",
+    sections: [
+      {
+        title: "Who is responsible",
+        text: [
+          `${o.company}, ${o.street}, ${o.city}, ${o.country}, ${o.email}, is responsible for the processing of personal data on this website and in ${BRAND.name}.`,
+        ],
+      },
+      {
+        title: "This website",
+        text: [
+          "When you visit this website, the server records your IP address, the page, the time and your browser in its log to deliver the pages and keep them secure, and deletes it once it is no longer needed for that. This website sets no cookies.",
+        ],
+      },
+      {
+        title: "Your account",
+        text: [
+          "When you sign up, we store your name, email address and what you create in the app, to provide the service you signed up for (Art. 6(1)(b) GDPR). We send you emails about your account through an email delivery provider.",
+        ],
+      },
+      {
+        title: "Your rights",
+        text: [
+          `You can ask us at any time what we store about you, have it corrected, deleted or handed over, and object to its processing: write to ${o.email}. You may also complain to a data protection authority.`,
+        ],
+      },
+    ],
+  },
+  de: {
+    imprint: "Impressum",
+    privacy: "Datenschutzerklärung",
+    sections: [
+      {
+        title: "Verantwortlich",
+        text: [
+          `Verantwortlich für die Verarbeitung personenbezogener Daten auf dieser Website und in ${BRAND.name} ist ${o.company}, ${o.street}, ${o.city}, ${o.country}, ${o.email}.`,
+        ],
+      },
+      {
+        title: "Diese Website",
+        text: [
+          "Beim Besuch dieser Website protokolliert der Server Ihre IP-Adresse, die Seite, die Uhrzeit und Ihren Browser, um die Seiten auszuliefern und abzusichern, und löscht es, sobald es dafür nicht mehr gebraucht wird. Diese Website setzt keine Cookies.",
+        ],
+      },
+      {
+        title: "Ihr Konto",
+        text: [
+          "Wenn Sie sich registrieren, speichern wir Ihren Namen, Ihre E-Mail-Adresse und was Sie in der App anlegen, um den Dienst zu erbringen, für den Sie sich angemeldet haben (Art. 6 Abs. 1 lit. b DSGVO). E-Mails zu Ihrem Konto versenden wir über einen E-Mail-Dienstleister.",
+        ],
+      },
+      {
+        title: "Ihre Rechte",
+        text: [
+          `Sie können jederzeit Auskunft über Ihre gespeicherten Daten verlangen, sie berichtigen, löschen oder herausgeben lassen und der Verarbeitung widersprechen: Schreiben Sie an ${o.email}. Außerdem können Sie sich bei einer Datenschutzbehörde beschweren.`,
+        ],
+      },
+    ],
+  },
+};
+const t = COPY[lang];
+const title = page === "imprint" ? t.imprint : t.privacy;
+---
+
+<Base title={`${title} · ${BRAND.name}`} description={title} lang={lang} page={page}>
+  <article class="container-site max-w-3xl py-20" data-testid={`web-${page}-page`}>
+    <h1 class="text-4xl font-semibold tracking-[-0.03em]">{title}</h1>
+    {page === "imprint" ? (
+      <address class="mt-10 space-y-1 leading-relaxed not-italic">
+        <p class="font-semibold">{o.company}</p>
+        <p>{o.street}</p>
+        <p>{o.city}</p>
+        <p>{o.country}</p>
+        <p class="pt-3">
+          <a href={`mailto:${o.email}`} class="text-brand underline-offset-4 hover:underline">
+            {o.email}
+          </a>
+        </p>
+        {o.details.map((line) => (
+          <p class="text-subtle">{line}</p>
+        ))}
+      </address>
+    ) : (
+      <div class="mt-10 space-y-10">
+        {t.sections.map((s) => (
+          <section>
+            <h2 class="text-xl font-semibold">{s.title}</h2>
+            {s.text.map((p) => (
+              <p class="mt-3 leading-relaxed text-subtle">{p}</p>
+            ))}
+          </section>
+        ))}
+      </div>
+    )}
+  </article>
+</Base>

@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@import "./brand.css";
+
+/*
+ * Colours by role, light and dark (the visitor's system setting). Components use the roles
+ * (bg-surface, text-subtle, border-line, ...), never a hex value; the brand colours themselves
+ * come from corporate-identity/brand.json through brand.css.
+ */
+:root {
+  --surface: var(--color-paper);
+  --raised: #ffffff;
+  --text: var(--color-ink);
+  --subtle: var(--color-ink-soft);
+  --line: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: var(--color-night);
+    --raised: color-mix(in oklab, var(--color-night) 88%, white);
+    --text: var(--color-paper);
+    --subtle: color-mix(in oklab, var(--color-paper) 70%, transparent);
+    --line: color-mix(in oklab, var(--color-paper) 14%, transparent);
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-text: var(--text);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply bg-surface text-text antialiased;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  ::selection {
+    @apply bg-brand text-brand-foreground;
+  }
+}
+
+@utility container-site {
+  @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+}

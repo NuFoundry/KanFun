@@ -1,0 +1,28 @@
+---
+/** The landing page, the same in every language (src/pages/index.astro, de/index.astro). */
+import { type Lang } from "../i18n";
+import Base from "../layouts/Base.astro";
+import { BRAND } from "../lib/site";
+import Closing from "./Closing.astro";
+import Faq from "./Faq.astro";
+import Features from "./Features.astro";
+import Hero from "./Hero.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const claims = BRAND.copy[lang];
+---
+
+<Base
+  title={`${BRAND.name}: ${claims.headline}`}
+  description={`${claims.headline} ${claims.tagline}`}
+  lang={lang}
+  page="home"
+>
+  <Hero lang={lang} />
+  <Features lang={lang} />
+  <Faq lang={lang} />
+  <Closing lang={lang} />
+</Base>

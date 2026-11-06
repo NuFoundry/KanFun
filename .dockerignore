@@ -1,0 +1,23 @@
+# Build contexts are the repo root (and, on Fly, uploaded to a remote builder): keep secrets,
+# data and local artefacts out of them even though the Dockerfiles copy only what they need.
+**/node_modules
+**/dist
+**/.astro
+**/coverage
+.git
+.env
+.env.*
+!.env.example
+deploy/.env.*
+!deploy/.env.prod.example
+server/pb_data
+server/pocketbase
+server/.tmp
+services/mailer/outbox
+services/pdf/previews
+playwright-report
+test-results
+e2e/.auth
+references
+*.pem
+*.key

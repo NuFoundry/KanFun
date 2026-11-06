@@ -1,0 +1,73 @@
+name: Deploy (Fly.io)
+
+# dev follows main: with the repository variable AUTO_DEPLOY_DEV set to `true`, every push to main
+# whose CI run succeeded deploys that exact commit to the dev apps (`<name>-dev-*`). stage and prod
+# are deployed by hand: run this workflow and pick the tier (prod only from main), or run
+# `pnpm deploy:prod` from a laptop.
+#
+# Each GitHub Environment (dev, stage, prod) holds its own FLY_API_TOKEN (an expiring token for
+# one organisation, `fly tokens create org <org> -x 2160h`, 90 days; prod in its own org) and an
+# optional APP_NAME variable. Without FLY_API_TOKEN a run deploys nothing. The apps' secrets were
+# pushed with `pnpm deploy:prod --init` (or `pnpm deploy:dev --init`) from a laptop.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target tier
+        type: choice
+        default: dev
+        options: [dev, stage, prod]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment || 'dev' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # By hand, or after a successful CI run of a push to main (a PR's CI never deploys).
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (vars.AUTO_DEPLOY_DEV == 'true' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
+    steps:
+      - name: prod only from main
+        if: inputs.environment == 'prod'
+        run: '[ "$GITHUB_REF" = refs/heads/main ] || { echo "prod deploys only from main"; exit 1; }'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The commit CI tested, not whatever main points to by now.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Token
+        id: token
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "::notice::FLY_API_TOKEN is not set for this environment: nothing deployed."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # master, 2026-04-08
+        if: steps.token.outputs.ready == 'true'
+      - name: Deploy
+        if: steps.token.outputs.ready == 'true'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: ${{ vars.APP_NAME }}
+          # The website is built here: its domain, the app's and whether search engines stay out.
+          DOMAIN: ${{ vars.DOMAIN }}
+          WEB_DOMAIN: ${{ vars.WEB_DOMAIN }}
+          WEB_NOINDEX: ${{ vars.WEB_NOINDEX }}
+          DEPLOY_ENV: ${{ inputs.environment || 'dev' }}
+        run: bash deploy/fly/deploy.sh

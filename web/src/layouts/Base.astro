@@ -1,0 +1,61 @@
+---
+/**
+ * Page shell: metadata, the self-hosted font (no requests to Google), the site CSS and the
+ * header and footer. Pages pass their title, description, language and which page they are, so
+ * the canonical URL, hreflang links and the language switcher point at the same page elsewhere.
+ */
+import "@fontsource-variable/inter";
+import "../styles/site.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { HTML_LANG, LANGS, OG_LOCALE, paths, type Lang, type Page } from "../i18n";
+import { BRAND, NOINDEX } from "../lib/site";
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  /** The page in paths (i18n.ts); omitted for pages that exist once, like the 404. */
+  page?: Page;
+}
+const { title, description, lang, page } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const alternates = page ? LANGS.map((l) => ({ lang: l, href: paths[page](l) })) : [];
+---
+
+<!doctype html>
+<html lang={HTML_LANG[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {NOINDEX && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    {alternates.length > 1 &&
+      alternates.map((a) => (
+        <link rel="alternate" hreflang={HTML_LANG[a.lang]} href={new URL(a.href, Astro.site)} />
+      ))}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content={BRAND.colors.paper} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={BRAND.colors.night} media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={BRAND.name} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(`/og-${lang}.png`, Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <Header lang={lang} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer lang={lang} alternates={alternates} />
+  </body>
+</html>

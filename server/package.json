@@ -1,0 +1,33 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PocketBase backend: binary + migrations + hooks + seeds",
+  "scripts": {
+    "download": "bash scripts/download-pocketbase.sh",
+    "dev": "bash scripts/serve.sh",
+    "start": "bash scripts/serve.sh",
+    "seed": "tsx seed/index.ts",
+    "seed:reset": "tsx seed/index.ts --reset",
+    "migrate:create": "./pocketbase migrate create",
+    "migrate:snapshot": "./pocketbase migrate collections",
+    "migrate:down": "./pocketbase migrate down",
+    "typegen": "pocketbase-typegen --db pb_data/data.db --out ../client/src/lib/pb-types.ts",
+    "test": "jest",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.5",
+    "pocketbase": "^0.28.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.19.1",
+    "jest": "^30.5.2",
+    "pocketbase-typegen": "^1.5.0",
+    "ts-jest": "^29.4.14",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

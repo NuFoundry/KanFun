@@ -1,0 +1,14 @@
+---
+/** The symbol of the mark (corporate-identity/logo/mark.svg) on its own, as a decoration. */
+import mark from "../../../corporate-identity/logo/mark.svg?raw";
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+const symbol = /class="fg"\s+d="([^"]+)"/.exec(mark)?.[1] ?? "";
+---
+
+<svg viewBox="4.5 4.5 15 15" aria-hidden="true" class:list={["fill-current", className]}>
+  <path d={symbol}></path>
+</svg>

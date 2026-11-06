@@ -1,0 +1,9 @@
+/* Written by `pnpm brand` from corporate-identity/brand.json. Do not edit by hand. */
+@theme {
+  --color-brand: #fd4d02;
+  --color-brand-foreground: #ffffff;
+  --color-ink: #181716;
+  --color-ink-soft: #44423f;
+  --color-paper: #fbfaf8;
+  --color-night: #151312;
+}

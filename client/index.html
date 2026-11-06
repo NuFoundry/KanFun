@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- viewport-fit=cover: the app draws edge to edge; the safe-area insets keep content clear of
+         the notch, the Dynamic Island, the home indicator and the rounded corners (pt-safe etc. in
+         styles.css). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>KanFun</title>
+    <meta name="description" content="KanFun" />
+    <!-- Added to the iOS home screen: its own window, and the status bar style "default" keeps the
+         clock and the Dynamic Island above the app with dark text. "black-translucent" would draw
+         the app under them, white text on the light UI. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="KanFun" />
+    <!-- The browser chrome and status bar follow the theme (theme.js, hooks/use-theme.ts). -->
+    <meta name="theme-color" content="#fbfaf8" />
+    <!-- A file, not an inline script: the production CSP allows scripts from this origin only. -->
+    <script src="/theme.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

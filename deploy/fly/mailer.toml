@@ -1,0 +1,23 @@
+# Mailer service on Fly.io (private, reached by PocketBase and other services over .internal).
+app = "kan-fun-mailer"
+primary_region = "fra"
+
+[build]
+  dockerfile = "../../services/mailer/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  MAIL_HOST = "::"
+  MAIL_PORT = "8788"
+
+[checks.health]
+  type = "http"
+  port = 8788
+  path = "/mail/health"
+  interval = "15s"
+  timeout = "5s"
+  grace_period = "10s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

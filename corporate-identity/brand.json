@@ -1,0 +1,23 @@
+{
+  "name": "KanFun",
+  "domain": "app.example.com",
+  "colors": {
+    "brand": "#fd4d02",
+    "brandForeground": "#ffffff",
+    "ink": "#181716",
+    "inkSoft": "#44423f",
+    "paper": "#fbfaf8",
+    "night": "#151312"
+  },
+  "wordmarkWeight": 600,
+  "copy": {
+    "en": {
+      "headline": "Everything you need, ready on day one.",
+      "tagline": "Built with care in Europe."
+    },
+    "de": {
+      "headline": "Alles, was Sie brauchen, ab dem ersten Tag.",
+      "tagline": "Mit Sorgfalt in Europa gebaut."
+    }
+  }
+}

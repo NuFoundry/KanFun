@@ -1,0 +1,93 @@
+---
+/** What the product does, in three blocks. Replace them once you know what sets it apart. */
+import type { Lang } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+type Feature = { icon: keyof typeof ICONS; title: string; text: string };
+const COPY: Record<Lang, { eyebrow: string; title: string; items: Feature[] }> = {
+  en: {
+    eyebrow: "Features",
+    title: "Everything in one place, from the first day.",
+    items: [
+      {
+        icon: "bolt",
+        title: "Ready in a minute",
+        text: "Sign up with your email and start right away. No setup, no training, nothing to install.",
+      },
+      {
+        icon: "device",
+        title: "On every device",
+        text: "Works in any browser and installs on your phone's home screen like an app.",
+      },
+      {
+        icon: "shield",
+        title: "Private by default",
+        text: "Your data is stored in Europe, never sold and never used to train anyone's models.",
+      },
+    ],
+  },
+  de: {
+    eyebrow: "Funktionen",
+    title: "Alles an einem Ort, vom ersten Tag an.",
+    items: [
+      {
+        icon: "bolt",
+        title: "In einer Minute startklar",
+        text: "Mit Ihrer E-Mail-Adresse registrieren und sofort loslegen. Keine Einrichtung, nichts zu installieren.",
+      },
+      {
+        icon: "device",
+        title: "Auf jedem Gerät",
+        text: "Läuft in jedem Browser und lässt sich wie eine App auf den Startbildschirm legen.",
+      },
+      {
+        icon: "shield",
+        title: "Privat von Anfang an",
+        text: "Ihre Daten liegen in Europa, werden nie verkauft und trainieren keine fremden Modelle.",
+      },
+    ],
+  },
+};
+const t = COPY[lang];
+
+/** Lucide icons (the app uses the same set), drawn inline so nothing loads from elsewhere. */
+const ICONS = {
+  bolt: "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
+  device: "M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM12 18h.01",
+  shield:
+    "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4",
+};
+---
+
+<section id="features" class="border-t border-line py-24">
+  <div class="container-site">
+    <p class="text-sm font-semibold tracking-wide text-brand uppercase">{t.eyebrow}</p>
+    <h2 class="mt-3 max-w-2xl text-4xl font-semibold tracking-[-0.03em] text-balance">{t.title}</h2>
+    <div class="mt-14 grid gap-5 md:grid-cols-3">
+      {t.items.map((item) => (
+        <article class="rounded-2xl border border-line bg-raised p-7">
+          <span class="grid size-11 place-items-center rounded-xl bg-brand/10 text-brand">
+            <svg
+              viewBox="0 0 24 24"
+              class="size-5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d={ICONS[item.icon]} />
+            </svg>
+          </span>
+          <h3 class="mt-5 text-lg font-semibold">{item.title}</h3>
+          <p class="mt-2 leading-relaxed text-subtle">{item.text}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

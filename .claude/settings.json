@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./pnpm-lock.yaml)",
+      "Read(./server/pb_data/**)",
+      "Read(./server/pocketbase)",
+      "Read(./playwright-report/**)",
+      "Read(./test-results/**)",
+      "Read(./**/dist/**)",
+      "Read(./**/coverage/**)",
+      "Read(./services/mailer/outbox/**)"
+    ]
+  }
+}

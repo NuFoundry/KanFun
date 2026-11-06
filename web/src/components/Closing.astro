@@ -1,0 +1,44 @@
+---
+/** The last call to action, on the brand colour. */
+import type { Lang } from "../i18n";
+import { SIGNUP_URL } from "../lib/site";
+import Spark from "./Spark.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const COPY: Record<Lang, { title: string; text: string; cta: string }> = {
+  en: {
+    title: "Ready when you are.",
+    text: "Create your account in under a minute and see for yourself.",
+    cta: "Create a free account",
+  },
+  de: {
+    title: "Bereit, wenn Sie es sind.",
+    text: "Legen Sie Ihr Konto in unter einer Minute an und überzeugen Sie sich selbst.",
+    cta: "Kostenloses Konto anlegen",
+  },
+};
+const t = COPY[lang];
+---
+
+<section class="py-24">
+  <div class="container-site">
+    <div class="relative overflow-hidden rounded-3xl bg-brand px-8 py-16 text-brand-foreground sm:px-16">
+      <Spark class="absolute -right-16 -bottom-24 size-96 text-brand-foreground/15" />
+      <h2 class="relative max-w-xl text-4xl font-semibold tracking-[-0.03em] text-balance">
+        {t.title}
+      </h2>
+      <p class="relative mt-4 max-w-lg text-lg opacity-90">{t.text}</p>
+      <a
+        href={SIGNUP_URL}
+        class="relative mt-8 inline-block rounded-xl bg-brand-foreground px-6 py-3 font-semibold text-brand shadow-lg transition hover:opacity-90"
+        data-testid="web-closing-signup"
+      >
+        {t.cta}
+      </a>
+    </div>
+  </div>
+</section>

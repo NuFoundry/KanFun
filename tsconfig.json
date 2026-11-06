@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM"],
+    "types": ["node"],
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "playwright.config.ts",
+    "e2e/**/*.ts",
+    "eslint.config.js",
+    "scripts/**/*.ts",
+    "strategy/tools/*.ts"
+  ],
+  "exclude": ["scripts/**/*.test.ts", "strategy/**/*.test.ts"]
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" width="360" height="360" role="img" aria-label="KanFun">
+  <title>KanFun</title>
+  <defs>
+    <style>#cut .bg{fill:#fff;fill-opacity:1}#cut .fg{fill:#000;fill-opacity:1}</style>
+    <mask id="cut" maskUnits="userSpaceOnUse" x="60" y="60" width="240" height="240">
+      <g transform="translate(60 60) scale(10)">
+    <rect class="bg" width="24" height="24" rx="6" fill="#fd4d02"/>
+  <path class="fg" d="M12 4.5C12.7 9.1 14.9 11.3 19.5 12C14.9 12.7 12.7 14.9 12 19.5C11.3 14.9 9.1 12.7 4.5 12C9.1 11.3 11.3 9.1 12 4.5Z" fill="#ffffff"/>
+  </g>
+    </mask>
+  </defs>
+  <rect x="60" y="60" width="240" height="240" fill="#ffffff" mask="url(#cut)"/>
+</svg>

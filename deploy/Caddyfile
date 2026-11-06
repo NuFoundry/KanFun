@@ -1,0 +1,146 @@
+# Caddy config for production, shared by every deploy target.
+#   DOMAIN        your-domain.com  -> automatic HTTPS via Let's Encrypt (Docker Compose / VPS)
+#                 :8080            -> plain HTTP behind a TLS-terminating edge (Fly.io)
+#   *_UPSTREAM    host:port of each service; defaults are the Docker Compose service names.
+#   WEB_SITE      the website's address: example.com (VPS, its own certificate) or
+#                 http://example.com:8080 behind Fly's edge; the app stays on DOMAIN.
+#   TRUSTED_PROXIES / CLIENT_IP_HEADERS
+#                 who may tell Caddy the visitor's IP. Default: nobody, the connection's address
+#                 is the visitor (VPS). Fly: private_ranges + Fly-Client-IP (deploy/fly/web.toml).
+#
+# Security rules this file implements (docs/security-checklist.md, "Edge"): the PocketBase admin
+# UI, the superuser API and the mailer are not on the internet; every service has a body limit;
+# third-party proxies pass only the paths they need, without cookies; the app gets HSTS, a
+# Permissions-Policy and a Content-Security-Policy that allows this origin only.
+{
+  # Let's Encrypt contact (VPS). Behind Fly's edge no certificate is requested and ACME_EMAIL is
+  # unset, but an empty `email` is a config error, hence the default.
+  email {$ACME_EMAIL:acme@localhost}
+  servers {
+    trusted_proxies static {$TRUSTED_PROXIES:127.0.0.1/32}
+    client_ip_headers {$CLIENT_IP_HEADERS:X-Forwarded-For}
+  }
+}
+
+{$DOMAIN} {
+  encode zstd gzip
+  root * {$SITE_ROOT:/srv}
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options nosniff
+    X-Frame-Options DENY
+    Referrer-Policy strict-origin-when-cross-origin
+    Permissions-Policy "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), browsing-topics=()"
+    -Server
+  }
+  # Where a header line has a feature-off twin, the twin comes first: in the template, with every
+  # feature present, the later line wins.
+
+  # The PocketBase admin UI and the superuser API stay off the internet: one password would open
+  # every account. Admins reach them through an SSH tunnel or `fly proxy` (deploy/README.md).
+  # PocketBase accepts the superuser collection by name and by its fixed id. The services talk to
+  # PocketBase inside the private network and are not affected.
+  @superuser path /_/* /_ /api/collections/_superusers/* /api/collections/pbc_3142635823/*
+  handle @superuser {
+    respond 404
+  }
+
+  # The mailer is internal (PocketBase hooks and services call it); its dev inbox never ships.
+  handle /mail/* {
+    respond 404
+  }
+
+  # PocketBase API and realtime (SSE). X-Real-IP is the visitor's address, which PocketBase's rate
+  # limits key on (server/pb_hooks/security.pb.js); a value the client sent is overwritten.
+  handle /api/* {
+    reverse_proxy {$PB_UPSTREAM:pocketbase:8090} {
+      header_up X-Real-IP {client_ip}
+      flush_interval -1
+    }
+  }
+
+  # AI service (streams SSE too). Voice messages are up to 10 MB.
+  handle /ai/* {
+    request_body {
+      max_size 12MB
+    }
+    reverse_proxy {$AI_UPSTREAM:ai:8787} {
+      flush_interval -1
+    }
+  }
+
+
+
+  # MCP server for AI agents: the endpoint, its OAuth routes and the two discovery documents.
+  # X-Real-IP is the agent's address (per-address limits; a value the client sent is overwritten).
+  @mcp path /mcp /mcp/* /.well-known/oauth-protected-resource /.well-known/oauth-protected-resource/* /.well-known/oauth-authorization-server
+  handle @mcp {
+    request_body {
+      max_size 1MB
+    }
+    reverse_proxy {$MCP_UPSTREAM:mcp:8791} {
+      header_up X-Real-IP {client_ip}
+      flush_interval -1
+    }
+  }
+
+
+
+  # Hashed build output: cached for good. A chunk that no longer exists after a deploy is a 404,
+  # never index.html served as JavaScript.
+  handle /assets/* {
+    header Cache-Control "public, max-age=31536000, immutable"
+    file_server
+  }
+
+  # The installable app's manifest, with its own type. It and the service worker (sw.js) are
+  # revalidated on every load (no-cache below), so a deploy reaches apps on home screens.
+  @manifest path /manifest.webmanifest
+  header @manifest Content-Type "application/manifest+json"
+
+  # React SPA. Scripts, styles, fonts and requests from this origin only (analytics go through
+  # /ph or /pl); inline styles because components set style props. The session token lives in
+  # localStorage, so this policy is what keeps an injected script from reaching it.
+  handle {
+    header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; manifest-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+    header Cache-Control "no-cache"
+    try_files {path} /index.html
+    file_server
+  }
+}
+
+# The website (web/, static HTML from Astro) on its own domain. It runs no script of its own and
+# loads nothing from elsewhere, so its policy is stricter than the app's: no inline styles either.
+{$WEB_SITE} {
+  encode zstd gzip
+  root * {$WEB_ROOT:/www}
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options nosniff
+    X-Frame-Options DENY
+    Referrer-Policy strict-origin-when-cross-origin
+    Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+    Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+    -Server
+  }
+
+
+  # Hashed build output (styles, fonts): cached for good.
+  handle /_astro/* {
+    header Cache-Control "public, max-age=31536000, immutable"
+    file_server
+  }
+
+  # Pages are folders (/privacy -> /privacy/index.html); anything else is the 404 page.
+  handle {
+    header Cache-Control "no-cache"
+    try_files {path} {path}/index.html
+    file_server
+  }
+  handle_errors 404 {
+    rewrite * /404.html
+    file_server
+  }
+}

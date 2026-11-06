@@ -1,0 +1,69 @@
+---
+import { section, paths, type Lang } from "../i18n";
+import { LOGIN_URL, SIGNUP_URL } from "../lib/site";
+import Logo from "./Logo.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const COPY: Record<
+  Lang,
+  { home: string; links: [string, string][]; login: string; signup: string }
+> = {
+  en: {
+    home: "Home",
+    links: [
+      ["features", "Features"],
+      ["faq", "FAQ"],
+    ],
+    login: "Log in",
+    signup: "Get started",
+  },
+  de: {
+    home: "Startseite",
+    links: [
+      ["features", "Funktionen"],
+      ["faq", "FAQ"],
+    ],
+    login: "Anmelden",
+    signup: "Jetzt starten",
+  },
+};
+const t = COPY[lang];
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-surface/80 backdrop-blur">
+  <div class="container-site flex h-16 items-center gap-6">
+    <a href={paths.home(lang)} aria-label={t.home} data-testid="web-logo">
+      <Logo class="h-12 -ml-2" />
+    </a>
+    <nav class="hidden items-center gap-1 md:flex" aria-label={t.home}>
+      {t.links.map(([id, label]) => (
+        <a
+          href={section(lang, id)}
+          class="rounded-md px-3 py-1.5 text-sm font-medium text-subtle transition-colors hover:text-text"
+        >
+          {label}
+        </a>
+      ))}
+    </nav>
+    <div class="ml-auto flex items-center gap-2">
+      <a
+        href={LOGIN_URL}
+        class="hidden rounded-lg px-3 py-2 text-sm font-medium text-subtle transition-colors hover:text-text sm:block"
+        data-testid="web-login"
+      >
+        {t.login}
+      </a>
+      <a
+        href={SIGNUP_URL}
+        class="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-sm transition hover:brightness-110"
+        data-testid="web-signup"
+      >
+        {t.signup}
+      </a>
+    </div>
+  </div>
+</header>

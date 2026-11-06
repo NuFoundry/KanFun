@@ -1,0 +1,103 @@
+---
+/**
+ * The first screen: the brand's claims (headline and tagline from corporate-identity/brand.json),
+ * one sentence on what the product does, and the way in. The window on the right stands in for a
+ * screenshot of the app until you have one.
+ */
+import { section, type Lang } from "../i18n";
+import { BRAND, SIGNUP_URL } from "../lib/site";
+import Spark from "./Spark.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const COPY: Record<Lang, { lead: string; cta: string; more: string; note: string }> = {
+  en: {
+    lead: "Describe in one or two sentences who your product is for and what it does for them. Visitors decide here whether to read on.",
+    cta: "Get started for free",
+    more: "See what it does",
+    note: "No credit card needed.",
+  },
+  de: {
+    lead: "Beschreiben Sie in ein, zwei Sätzen, für wen Ihr Produkt ist und was es für diese Menschen leistet. Hier entscheiden Besucher, ob sie weiterlesen.",
+    cta: "Kostenlos starten",
+    more: "Mehr erfahren",
+    note: "Keine Kreditkarte nötig.",
+  },
+};
+const t = COPY[lang];
+const claims = BRAND.copy[lang];
+---
+
+<section class="relative overflow-hidden">
+  <Spark class="pointer-events-none absolute -top-24 -right-40 size-[38rem] text-brand opacity-[0.07] max-lg:hidden" />
+  <div class="container-site grid items-center gap-14 py-20 lg:grid-cols-[1.1fr_1fr] lg:py-28">
+    <div>
+      <p class="inline-flex items-center gap-2 rounded-full border border-line bg-raised px-3 py-1 text-sm font-medium text-subtle">
+        <Spark class="size-3.5 text-brand" />
+        {claims.tagline}
+      </p>
+      <h1
+        class="mt-6 text-5xl font-semibold tracking-[-0.035em] text-balance sm:text-6xl lg:text-7xl"
+        data-testid="web-headline"
+      >
+        {claims.headline}
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-pretty text-subtle">{t.lead}</p>
+      <div class="mt-9 flex flex-wrap items-center gap-3">
+        <a
+          href={SIGNUP_URL}
+          class="rounded-xl bg-brand px-6 py-3 text-base font-semibold text-brand-foreground shadow-lg shadow-brand/25 transition hover:brightness-110"
+          data-testid="web-hero-signup"
+        >
+          {t.cta}
+        </a>
+        <a
+          href={section(lang, "features")}
+          class="rounded-xl border border-line px-6 py-3 text-base font-medium transition-colors hover:bg-raised"
+        >
+          {t.more}
+        </a>
+      </div>
+      <p class="mt-4 text-sm text-subtle">{t.note}</p>
+    </div>
+
+    <div class="relative" aria-hidden="true">
+      <div class="absolute -inset-10 rounded-full bg-brand/20 blur-3xl"></div>
+      <div class="relative overflow-hidden rounded-2xl border border-line bg-raised shadow-2xl">
+        <div class="flex items-center gap-1.5 border-b border-line px-4 py-3">
+          <span class="size-2.5 rounded-full bg-line"></span>
+          <span class="size-2.5 rounded-full bg-line"></span>
+          <span class="size-2.5 rounded-full bg-line"></span>
+          <span class="mx-auto h-5 w-48 rounded-md bg-surface"></span>
+        </div>
+        <div class="grid grid-cols-[7rem_1fr] gap-5 p-5">
+          <div class="space-y-3">
+            <Spark class="mb-5 size-7 text-brand" />
+            <div class="h-2.5 w-20 rounded bg-line"></div>
+            <div class="h-2.5 w-16 rounded bg-line"></div>
+            <div class="h-2.5 w-[4.5rem] rounded bg-line"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="h-4 w-2/3 rounded bg-text/80"></div>
+            <div class="grid grid-cols-3 gap-3">
+              <div class="h-16 rounded-lg bg-brand"></div>
+              <div class="h-16 rounded-lg bg-surface"></div>
+              <div class="h-16 rounded-lg bg-surface"></div>
+            </div>
+            <div class="space-y-2.5 rounded-lg border border-line p-3">
+              <div class="h-2.5 w-full rounded bg-line"></div>
+              <div class="h-2.5 w-5/6 rounded bg-line"></div>
+              <div class="h-2.5 w-4/6 rounded bg-line"></div>
+            </div>
+            <div class="flex justify-end">
+              <div class="h-8 w-24 rounded-md bg-brand/90"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

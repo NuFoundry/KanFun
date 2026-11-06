@@ -1,0 +1,31 @@
+{
+  "name": "mailer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mail service: templates + provider switch (Lettermint / Resend / SMTP / local outbox); every email in the stack goes through it",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.3",
+    "dotenv": "^18.0.5",
+    "hono": "^4.13.12",
+    "nodemailer": "^10.0.14",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.19.1",
+    "@types/nodemailer": "^8.0.2",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.14",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}

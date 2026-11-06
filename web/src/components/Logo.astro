@@ -1,0 +1,19 @@
+---
+/**
+ * The logo from corporate-identity (`pnpm brand` copies it into public/): the dark wordmark on
+ * light backgrounds, the light one in dark mode. The files keep a margin of a sixth of their
+ * height around the drawing: pass a height and a left margin of minus a sixth of it
+ * ("h-12 -ml-2") so the mark lines up with the text below it.
+ */
+import { BRAND } from "../lib/site";
+
+interface Props {
+  class?: string;
+}
+const { class: className = "h-12 -ml-2" } = Astro.props;
+---
+
+<picture class="block shrink-0">
+  <source srcset="/logo-on-dark.svg" media="(prefers-color-scheme: dark)" />
+  <img src="/logo.svg" alt={BRAND.name} class:list={["w-auto", className]} />
+</picture>

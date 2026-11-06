@@ -1,0 +1,24 @@
+# AI service on Fly.io (private; Caddy in the web app proxies /ai/* to it).
+app = "kan-fun-ai"
+primary_region = "fra"
+
+[build]
+  dockerfile = "../../services/ai/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  AI_HOST = "::"
+  AI_PORT = "8787"
+  # POCKETBASE_URL (http://<prefix>-pb.internal:8090) is set by deploy.sh per environment.
+
+[checks.health]
+  type = "http"
+  port = 8787
+  path = "/ai/health"
+  interval = "15s"
+  timeout = "5s"
+  grace_period = "10s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

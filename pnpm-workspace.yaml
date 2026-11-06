@@ -1,0 +1,32 @@
+packages:
+  - client
+  - server
+  - services/*
+  - web
+
+# Supply-chain guard: refuse package versions published less than 24h ago
+# (gives the ecosystem time to yank compromised releases). Value is in minutes.
+minimumReleaseAge: 1440
+# Add a package here only after confirming with the user.
+minimumReleaseAgeExclude: []
+
+autoInstallPeers: true
+# Deprecated transitive packages we cannot replace (jest -> glob, pocketbase-typegen ->
+# prebuild-install, jsdom -> whatwg-encoding); silences the install warning until upstream moves.
+allowedDeprecatedVersions:
+  glob: "10 || 11"
+  prebuild-install: "7"
+  whatwg-encoding: "3"
+strictPeerDependencies: false
+
+# Packages allowed to run install scripts (native binaries); `false` silences the prompt.
+allowBuilds:
+  esbuild: true
+  better-sqlite3: true
+  "@parcel/watcher": true
+  unrs-resolver: true
+  core-js: false
+
+# pdfjs-dist reads PDFs in the browser; its optional canvas binary is for Node only.
+ignoredOptionalDependencies:
+  - "@napi-rs/canvas"

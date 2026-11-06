@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Before every commit: the security rules a machine can check, then the questions for the areas
+# this commit touches (scripts/check-security.sh, docs/security-checklist.md). Installed by
+# `pnpm install` / `pnpm bootstrap` (git config core.hooksPath .githooks). Never skip it with
+# --no-verify; fix what it reports.
+exec bash "$(git rev-parse --show-toplevel)/scripts/check-security.sh" staged

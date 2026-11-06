@@ -1,0 +1,39 @@
+# Builds the React client and serves it with Caddy. Build context must be the repo root.
+# The website (web/) is built in its own stage and served by the same Caddy on WEB_DOMAIN.
+FROM node:24-alpine AS website
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY web/package.json web/
+RUN pnpm install --frozen-lockfile --filter web
+COPY web web
+# Name, claims, colours and the mark come from the brand.
+COPY corporate-identity/brand.json corporate-identity/
+COPY corporate-identity/logo/mark.svg corporate-identity/logo/
+# The deploy scripts and Compose pass the real domains; the defaults keep a bare `docker build`
+# working (Astro refuses an empty site URL).
+ARG DOMAIN="app.example.com"
+ARG WEB_DOMAIN="example.com"
+ARG WEB_NOINDEX="false"
+ENV SITE_URL=https://$WEB_DOMAIN PUBLIC_APP_URL=https://$DOMAIN PUBLIC_NOINDEX=$WEB_NOINDEX
+RUN pnpm --filter web build
+
+FROM node:24-alpine AS build
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc tsconfig.base.json ./
+COPY client/package.json client/
+RUN pnpm install --frozen-lockfile --filter client
+COPY client client
+ARG VITE_APP_NAME="KanFun"
+ENV VITE_APP_NAME=$VITE_APP_NAME
+RUN pnpm --filter client build
+# Source maps were uploaded to Sentry by the build (when configured); production never serves them.
+RUN find client/dist -name "*.map" -delete
+
+FROM caddy:2.11.7-alpine
+COPY deploy/Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /app/client/dist /srv
+COPY --from=website /app/web/dist /www

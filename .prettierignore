@@ -1,0 +1,17 @@
+node_modules
+dist
+.astro
+build
+coverage
+playwright-report
+test-results
+pnpm-lock.yaml
+package-lock.json
+bun.lock
+server/pb_data
+server/pb_public
+server/pocketbase
+client/src/lib/pb-types.ts
+*.min.*
+services/pdf/previews
+strategy/research

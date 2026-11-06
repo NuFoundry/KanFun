@@ -1,0 +1,25 @@
+{
+  "template": "vibe-coding-standard",
+  "templateVersion": "1.15.0",
+  "name": "kan-fun",
+  "displayName": "KanFun",
+  "features": {
+    "ai": true,
+    "aiProvider": "mistral",
+    "stripe": false,
+    "analytics": "none",
+    "errorTracking": "none",
+    "oauth": [],
+    "i18n": true,
+    "deploy": "fly",
+    "email": "later",
+    "web": "server",
+    "pdf": false,
+    "mcp": true
+  },
+  "agents": ["claude-code"],
+  "branching": "main",
+  "gitHost": "github",
+  "gitCli": false,
+  "createdAt": "2026-11-06T17:47:20.122Z"
+}
